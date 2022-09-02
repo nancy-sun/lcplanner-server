@@ -3,22 +3,31 @@ const dotenv = require("dotenv");
 const { MongoClient, ServerApiVersion } = require('mongodb');
 dotenv.config();
 
-
-
-
-
-const books = [
-    {
-        title: 'The Awakening',
-        author: 'Kate Chopin',
-    },
-    {
-        title: 'City of Glass',
-        author: 'Paul Auster',
-    },
-];
-
 const typeDefs = gql`
+
+    input SignUpInput {
+        email: String!
+        password: String!
+        name: String!
+        avatar: String
+    }
+
+    input SignInInput {
+        email: String!
+        password: String!
+    }
+
+    type Mutation{
+        signUp(input: SignUpInput): Auth!
+        signIn(input: SignInInput): Auth!
+    }
+
+
+    type Auth {
+        user: User!
+        token: String!
+    }
+
     type User {
         id: ID!
         name: String!
@@ -54,6 +63,12 @@ const resolvers = {
     Query: {
         WeeklyTasks: () => [],
     },
+    Mutation: {
+        signUp: (root, { input }) => {
+            console.log(input);
+        },
+        signIn: () => { }
+    }
 };
 
 const run = async () => {
