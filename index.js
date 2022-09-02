@@ -1,6 +1,7 @@
 const { ApolloServer, gql } = require("apollo-server");
 const dotenv = require("dotenv");
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const bcrypt = require('bcryptjs');
 dotenv.config();
 
 const typeDefs = gql`
@@ -18,8 +19,8 @@ const typeDefs = gql`
     }
 
     type Mutation{
-        signUp(input: SignUpInput): Auth!
-        signIn(input: SignInInput): Auth!
+        signUp(input: SignUpInput!): Auth!
+        signIn(input: SignInInput!): Auth!
     }
 
 
@@ -64,10 +65,20 @@ const resolvers = {
         WeeklyTasks: () => [],
     },
     Mutation: {
-        signUp: (root, { input }) => {
-            console.log(input);
+        signUp: async (_, { input }, { db }) => {
+            const hashPw = bcrypt.hashSync(input.password); //hash password
+            const newUser = { ...input, password: hashPw }; //update password with hashed
+            // const result = await db.collection("Users").insertOne(newUser);
+            // console.log(result.ops)
+            // const user = result.ops[0];
+            // return { user, token: "token" }
+            return { result }
         },
         signIn: () => { }
+    },
+    User: {
+        // id: ({ _id, id }) => _id || id
+        id: (root) => { console.log(root) }
     }
 };
 
@@ -75,9 +86,13 @@ const run = async () => {
     const client = new MongoClient(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
     await client.connect();
     const db = client.db(process.env.DATABASE_NAME);
+    const context = { db }
     const server = new ApolloServer({
         typeDefs,
         resolvers,
+        context: async ({ req }) => {
+            return { db }
+        }
     });
 
     server.listen().then(({ url }) => {
