@@ -34,63 +34,72 @@ const typeDefs = gql`
         name: String!
         email: String!
         avatar: String
-        friends:[User!]
     }
 
-    type WeeklyTasks {
+    type TasksList {
         id: ID!
         date: [Task!]
         recap: String
+        owner: User!
+        access:[User!]!
+        tasks: [Task!]!
     }
 
     type Task {
         id: ID!
         date: String!
-        createdAt: String!
         title: String!
         deadline: String
         recap: String
         isCompleted: Boolean!
-        week: WeeklyTasks
+        tasklist: TasksList!
     }
 
     type Query {
-        WeeklyTasks: [WeeklyTasks]
+        TasksList: [TasksList]
     }
 `;
 
 
 const resolvers = {
     Query: {
-        WeeklyTasks: () => [],
+        TasksList: () => [],
     },
     Mutation: {
         signUp: async (_, { input }, { db }) => {
             const hashPw = bcrypt.hashSync(input.password); //hash password
             const newUser = { ...input, password: hashPw }; //update password with hashed
-            // const result = await db.collection("Users").insertOne(newUser);
-            // console.log(result.ops)
-            // const user = result.ops[0];
-            // return { user, token: "token" }
-            return { result }
+            const result = await db.collection("Users").insertOne(newUser);
+            const userID = result.insertedId;
+            const foundUser = await db.collection("Users").findOne({ _id: userID });
+            return { user: foundUser, token: "tok" };
         },
-        signIn: () => { }
+        signIn: async (_, { input }, { db }) => {
+            const foundUser = await db.collection("Users").findOne({ email: input.email });
+            if (!foundUser) { //verify email
+                throw new Error("Invalid credentials");
+            }
+            const verifyPw = bcrypt.compareSync(input.password, foundUser.password);
+            if (!verifyPw) { //verify password
+                throw new Error("Invalid credentials");
+            }
+            return { user: foundUser, token: "token" };
+        }
     },
     User: {
-        // id: ({ _id, id }) => _id || id
-        id: (root) => { console.log(root) }
+        id: ({ _id, id }) => _id || id, // id as _id in mongoDB
     }
 };
 
-const run = async () => {
-    const client = new MongoClient(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const run = async () => { // connect to db, then start server
+    const client = new MongoClient(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true });
     await client.connect();
     const db = client.db(process.env.DATABASE_NAME);
-    const context = { db }
     const server = new ApolloServer({
         typeDefs,
         resolvers,
         context: async ({ req }) => {
+            // const db = db;
             return { db }
         }
     });
