@@ -1,7 +1,8 @@
 const { ApolloServer, gql } = require("apollo-server");
 const dotenv = require("dotenv");
-const { MongoClient, ServerApiVersion } = require('mongodb');
-const bcrypt = require('bcryptjs');
+const { MongoClient, ObjectId } = require("mongodb");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 dotenv.config();
 
 const typeDefs = gql`
@@ -60,6 +61,14 @@ const typeDefs = gql`
     }
 `;
 
+const getToken = (user) => jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30 days' });
+
+const getUser = async (token, db) => {
+    if (!token) return null;
+    const tokenData = jwt.verify(token, process.env.JWT_SECRET);
+    if (!tokenData?.id) return null;
+    return await db.collection("Users").findOne({ _id: ObjectId(tokenData.id) });
+}
 
 const resolvers = {
     Query: {
@@ -72,7 +81,7 @@ const resolvers = {
             const result = await db.collection("Users").insertOne(newUser);
             const userID = result.insertedId;
             const foundUser = await db.collection("Users").findOne({ _id: userID });
-            return { user: foundUser, token: "tok" };
+            return { user: foundUser, token: getToken(foundUser) };
         },
         signIn: async (_, { input }, { db }) => {
             const foundUser = await db.collection("Users").findOne({ email: input.email });
@@ -83,7 +92,7 @@ const resolvers = {
             if (!verifyPw) { //verify password
                 throw new Error("Invalid credentials");
             }
-            return { user: foundUser, token: "token" };
+            return { user: foundUser, token: getToken(foundUser) };
         }
     },
     User: {
@@ -99,14 +108,15 @@ const run = async () => { // connect to db, then start server
         typeDefs,
         resolvers,
         context: async ({ req }) => {
-            // const db = db;
-            return { db }
+            const user = await getUser(req.headers.authorization, db);
+            console.log(user)
+            return { db, user };
         }
     });
 
     server.listen().then(({ url }) => {
         console.log(`🚀  Server ready at ${url}`);
     });
-}
+};
 
 run();
