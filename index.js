@@ -19,9 +19,15 @@ const typeDefs = gql`
         password: String!
     }
 
+    input TasksListInput {
+        recap: String
+    }
+
     type Mutation{
         signUp(input: SignUpInput!): Auth!
         signIn(input: SignInInput!): Auth!
+
+        createTasksList(input: TasksListInput!): TasksList!
     }
 
 
@@ -39,9 +45,8 @@ const typeDefs = gql`
 
     type TasksList {
         id: ID!
-        date: [Task!]
         recap: String
-        owner: User!
+        progress: Float!
         access:[User!]!
         tasks: [Task!]!
     }
@@ -83,6 +88,7 @@ const resolvers = {
             const foundUser = await db.collection("Users").findOne({ _id: userID });
             return { user: foundUser, token: getToken(foundUser) };
         },
+
         signIn: async (_, { input }, { db }) => {
             const foundUser = await db.collection("Users").findOne({ email: input.email });
             if (!foundUser) { //verify email
@@ -93,10 +99,33 @@ const resolvers = {
                 throw new Error("Invalid credentials");
             }
             return { user: foundUser, token: getToken(foundUser) };
+        },
+
+        createTasksList: async (_, { recap }, { db, user }) => {
+            if (!user) {
+                throw new Error("Authentication failed.");
+            }
+            const newTasksList = {
+                recap,
+                accessIDs: [user._id]
+            }
+            const result = await db.collection("TasksList").insertOne(newTasksList);
+            const tasksListID = result.insertedId;
+            const foundTasksList = await db.collection("TasksList").findOne({ _id: tasksListID });
+            return foundTasksList;
         }
     },
+
     User: {
         id: ({ _id, id }) => _id || id, // id as _id in mongoDB
+    },
+
+    TasksList: {
+        id: ({ _id, id }) => _id || id, // id as _id in mongoDB
+        progress: () => 0,
+        access: async ({ accessIDs }, _, { db }) => Promise.all(  // connect with Users collection
+            accessIDs.map((accessID) => db.collection("Users").findOne({ _id: accessID }))
+        )
     }
 };
 
@@ -109,7 +138,6 @@ const run = async () => { // connect to db, then start server
         resolvers,
         context: async ({ req }) => {
             const user = await getUser(req.headers.authorization, db);
-            console.log(user)
             return { db, user };
         }
     });
