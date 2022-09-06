@@ -1,8 +1,6 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 const { ObjectId } = require("mongodb");
-
-const getToken = (user) => jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30 days' });
+const getToken = require("../utils/utils");
 
 const Mutation = {
     /* auth */

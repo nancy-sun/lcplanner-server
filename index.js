@@ -1,19 +1,12 @@
-const { ApolloServer, gql } = require("apollo-server");
+const { ApolloServer } = require("apollo-server");
 const dotenv = require("dotenv");
-const { MongoClient, ObjectId } = require("mongodb");
-const jwt = require("jsonwebtoken");
+const { MongoClient } = require("mongodb");
 const { readFileSync } = require("fs");
 const typeDefs = readFileSync(require.resolve("./src/schema.graphql")).toString("utf-8");
 const resolvers = require("./src/resolvers/resolvers");
+const getUser = require("./src/utils/utils");
 
 dotenv.config();
-
-const getUser = async (token, db) => {
-    if (!token) return null;
-    const tokenData = jwt.verify(token, process.env.JWT_SECRET);
-    if (!tokenData?.id) return null;
-    return await db.collection("Users").findOne({ _id: ObjectId(tokenData.id) });
-}
 
 const run = async () => { // connect to db, then start server
     const client = new MongoClient(process.env.DATABASE_URI, { useNewUrlParser: true, useUnifiedTopology: true });
