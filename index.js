@@ -27,6 +27,9 @@ const typeDefs = gql`
         updateTasksList(id: ID!, recap: String): TasksList!
         deleteTasksList(id: ID!): Boolean! #return if successfully deleted
         addTasksListUser(tasksListID: ID!, userID: ID!): TasksList! #add other users
+
+        createTask(title: String!, date: String!, deadline: String, note: String, tasksListID: ID!): Task!
+
     }
 
     type Auth {
@@ -54,9 +57,9 @@ const typeDefs = gql`
         date: String!
         title: String!
         deadline: String
-        recap: String
+        note: String
         isCompleted: Boolean!
-        tasklist: TasksList!
+        tasksList: TasksList!
     }
 
     type Query {
@@ -94,6 +97,7 @@ const resolvers = {
         },
     },
     Mutation: {
+        /* auth */
         signUp: async (_, { input }, { db }) => {
             const hashPw = bcrypt.hashSync(input.password); //hash password
             const newUser = { ...input, password: hashPw }; //update password with hashed
@@ -115,6 +119,7 @@ const resolvers = {
             return { user: foundUser, token: getToken(foundUser) };
         },
 
+        /* tasks list */
         createTasksList: async (_, { recap }, { db, user }) => {
             if (!user) {
                 throw new Error("Authentication failed.");
@@ -163,6 +168,25 @@ const resolvers = {
             const updatedTasksList = await db.collection("TasksList").findOne({ _id: ObjectId(tasksListID) });
             return updatedTasksList;
         },
+
+        /* task */
+        createTask: async (_, { title, deadline, note, tasksListID, date }, { db, user }) => {
+            if (!user) {
+                throw new Error("Authentication failed.");
+            }
+            const newTask = {
+                title,
+                deadline,
+                note,
+                date,
+                tasksListID: ObjectId(tasksListID),
+                isCompleted: false
+            };
+            const result = await db.collection("Tasks").insertOne(newTask);
+            const taskID = result.insertedId;
+            const foundTask = await db.collection("Tasks").findOne({ _id: taskID });
+            return foundTask;
+        }
     },
 
     User: {
@@ -174,8 +198,16 @@ const resolvers = {
         progress: () => 0,
         access: async ({ accessIDs }, _, { db }) => Promise.all(  // connect with Users collection
             accessIDs.map((accessID) => db.collection("Users").findOne({ _id: accessID }))
-        )
-    }
+        ),
+        tasks: async ({ _id }, _, { db }) => await db.collection("Tasks").find({ tasksListID: _id }).toArray() // get all tasks in task list
+    },
+
+    Task: {
+        id: ({ _id, id }) => _id || id, // id as _id in mongoDB
+        tasksList: async ({ tasksListID }, _, { db }) => // connect task to tasksList
+            await db.collection("TasksList").findOne({ _id: tasksListID })
+    },
+
 };
 
 const run = async () => { // connect to db, then start server
