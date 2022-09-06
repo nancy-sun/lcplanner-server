@@ -19,15 +19,12 @@ const typeDefs = gql`
         password: String!
     }
 
-    input TasksListInput {
-        recap: String
-    }
-
     type Mutation{
         signUp(input: SignUpInput!): Auth!
         signIn(input: SignInInput!): Auth!
 
-        createTasksList(input: TasksListInput!): TasksList!
+        createTasksList(recap: String): TasksList!
+        updateTasksList(id: ID!, recap: String): TasksList!
     }
 
 
@@ -62,7 +59,7 @@ const typeDefs = gql`
     }
 
     type Query {
-        TasksList: [TasksList]
+        myTasksList: [TasksList!]!
     }
 `;
 
@@ -77,7 +74,13 @@ const getUser = async (token, db) => {
 
 const resolvers = {
     Query: {
-        TasksList: () => [],
+        myTasksList: async (_, __, { db, user }) => {
+            if (!user) {
+                throw new Error("Authentication failed.");
+            }
+            return await db.collection("TasksList").find({ accessIDs: user._id }).toArray();
+
+        },
     },
     Mutation: {
         signUp: async (_, { input }, { db }) => {
@@ -112,6 +115,15 @@ const resolvers = {
             const result = await db.collection("TasksList").insertOne(newTasksList);
             const tasksListID = result.insertedId;
             const foundTasksList = await db.collection("TasksList").findOne({ _id: tasksListID });
+            return foundTasksList;
+        },
+
+        updateTasksList: async (_, { id, recap }, { db, user }) => {
+            if (!user) {
+                throw new Error("Authentication failed.");
+            }
+            await db.collection("TasksList").updateOne({ _id: ObjectId(id) }, { $set: { recap: recap } });
+            const foundTasksList = await db.collection("TasksList").findOne({ _id: ObjectId(id) });
             return foundTasksList;
         }
     },
