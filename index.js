@@ -25,8 +25,9 @@ const typeDefs = gql`
 
         createTasksList(recap: String): TasksList!
         updateTasksList(id: ID!, recap: String): TasksList!
+        deleteTasksList(id: ID!): Boolean! #return if successfully deleted
+        addTasksListUser(tasksListID: ID!, userID: ID!): TasksList! #add other users
     }
-
 
     type Auth {
         user: User!
@@ -60,6 +61,8 @@ const typeDefs = gql`
 
     type Query {
         myTasksList: [TasksList!]!
+        getTasksList(id: ID!): TasksList
+
     }
 `;
 
@@ -74,12 +77,20 @@ const getUser = async (token, db) => {
 
 const resolvers = {
     Query: {
-        myTasksList: async (_, __, { db, user }) => {
+        myTasksList: async (_, __, { db, user }) => { //get all tasks list under a user
             if (!user) {
                 throw new Error("Authentication failed.");
             }
             return await db.collection("TasksList").find({ accessIDs: user._id }).toArray();
 
+        },
+
+        getTasksList: async (_, { id }, { db, user }) => { // get a single tasks list
+            if (!user) {
+                throw new Error("Authentication failed.");
+            }
+            const foundTasksList = await db.collection("TasksList").findOne({ _id: ObjectId(id) });
+            return foundTasksList;
         },
     },
     Mutation: {
@@ -111,7 +122,7 @@ const resolvers = {
             const newTasksList = {
                 recap,
                 accessIDs: [user._id]
-            }
+            };
             const result = await db.collection("TasksList").insertOne(newTasksList);
             const tasksListID = result.insertedId;
             const foundTasksList = await db.collection("TasksList").findOne({ _id: tasksListID });
@@ -125,7 +136,33 @@ const resolvers = {
             await db.collection("TasksList").updateOne({ _id: ObjectId(id) }, { $set: { recap: recap } });
             const foundTasksList = await db.collection("TasksList").findOne({ _id: ObjectId(id) });
             return foundTasksList;
-        }
+        },
+
+        deleteTasksList: async (_, { id }, { db, user }) => {
+            if (!user) {
+                throw new Error("Authentication failed.");
+            }
+            await db.collection("TasksList").deleteOne({ _id: ObjectId(id) });
+            return true;
+        },
+
+        addTasksListUser: async (_, { tasksListID, userID }, { db, user }) => {
+            if (!user) {
+                throw new Error("Authentication failed.");
+            }
+
+            const tasksList = await db.collection("TasksList").findOne({ _id: ObjectId(tasksListID) });
+            if (!tasksList) return null;
+
+            // check if user already exists in access list
+            if (tasksList.accessIDs.find((id) => id.toString() === userID.toString())) {
+                return tasksList;
+            }
+
+            await db.collection("TasksList").updateOne({ _id: ObjectId(tasksListID) }, { $push: { accessIDs: ObjectId(userID) } });
+            const updatedTasksList = await db.collection("TasksList").findOne({ _id: ObjectId(tasksListID) });
+            return updatedTasksList;
+        },
     },
 
     User: {
