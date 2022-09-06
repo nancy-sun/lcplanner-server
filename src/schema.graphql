@@ -1,0 +1,60 @@
+input SignUpInput {
+    email: String!
+    password: String!
+    name: String!
+    avatar: String
+}
+
+input SignInInput {
+    email: String!
+    password: String!
+}
+
+type Mutation{
+    signUp(input: SignUpInput!): Auth!
+    signIn(input: SignInInput!): Auth!
+
+    createTasksList(recap: String): TasksList!
+    updateTasksList(id: ID!, recap: String): TasksList!
+    deleteTasksList(id: ID!): Boolean! #return if successfully deleted
+    addTasksListUser(tasksListID: ID!, userID: ID!): TasksList! #add other users
+
+    createTask(title: String!, date: String!, deadline: String, note: String, tasksListID: ID!): Task!
+    updateTask(id: ID!, title: String, date:String, deadline: String, note: String, isCompleted: Boolean): Task!
+    deleteTask(id: ID!): Boolean! #return if successfully deleted
+}
+
+type Auth {
+    user: User!
+    token: String!
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    avatar: String
+}
+
+type TasksList {
+    id: ID!
+    recap: String
+    progress: Float!
+    access:[User!]!
+    tasks: [Task!]!
+}
+
+type Task {
+    id: ID!
+    date: String!
+    title: String!
+    deadline: String
+    note: String
+    isCompleted: Boolean!
+    tasksList: TasksList!
+}
+
+type Query {
+    myTasksList: [TasksList!]!
+    getTasksList(id: ID!): TasksList
+}
