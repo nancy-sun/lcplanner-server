@@ -8,7 +8,6 @@ const getUser = async (token, db) => {
     return await db.collection("Users").findOne({ _id: ObjectId(tokenData.id) });
 }
 
-const getToken = (user) => jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '30 days' });
-
+const getToken = (user) => jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '60 days' });
 
 module.exports = { getUser, getToken };
