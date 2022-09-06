@@ -17,11 +17,13 @@ Start running
 ## Tech Stack
 - Node.js
 - GraphQL
+- ApolloServer
 - JWT
 - MongoDB
 
 ## Libraries & Resources  
-
+- cors
+- bcrypt
 
 ## API Documentation 
 ### Overview 
