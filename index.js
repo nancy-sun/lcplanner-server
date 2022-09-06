@@ -29,7 +29,8 @@ const typeDefs = gql`
         addTasksListUser(tasksListID: ID!, userID: ID!): TasksList! #add other users
 
         createTask(title: String!, date: String!, deadline: String, note: String, tasksListID: ID!): Task!
-
+        updateTask(id: ID!, title: String, date:String, deadline: String, note: String, isCompleted: Boolean): Task!
+        deleteTask(id: ID!): Boolean! #return if successfully deleted
     }
 
     type Auth {
@@ -186,7 +187,24 @@ const resolvers = {
             const taskID = result.insertedId;
             const foundTask = await db.collection("Tasks").findOne({ _id: taskID });
             return foundTask;
-        }
+        },
+
+        updateTask: async (_, data, { db, user }) => {
+            if (!user) {
+                throw new Error("Authentication failed.");
+            }
+            await db.collection("Tasks").updateOne({ _id: ObjectId(data.id) }, { $set: data });
+            const foundTask = await db.collection("Tasks").findOne({ _id: ObjectId(data.id) });
+            return foundTask;
+        },
+
+        deleteTask: async (_, { id }, { db, user }) => {
+            if (!user) {
+                throw new Error("Authentication failed.");
+            }
+            await db.collection("Tasks").deleteOne({ _id: ObjectId(id) });
+            return true;
+        },
     },
 
     User: {
