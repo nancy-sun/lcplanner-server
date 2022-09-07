@@ -1,5 +1,5 @@
 const bcrypt = require("bcryptjs");
-const getToken = require("../utils/utils").getToken;
+const { getToken } = require("../utils/utils");
 
 const signUp = async (_, { input }, { db }) => {
     const hashPw = bcrypt.hashSync(input.password); //hash password

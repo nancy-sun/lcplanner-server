@@ -4,7 +4,7 @@ const { MongoClient } = require("mongodb");
 const { readFileSync } = require("fs");
 const typeDefs = readFileSync(require.resolve("./src/schema.graphql")).toString("utf-8");
 const resolvers = require("./src/resolvers/resolvers");
-const getUser = require("./src/utils/utils").getUser;
+const { getUser } = require("./src/utils/utils");
 
 dotenv.config();
 

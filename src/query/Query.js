@@ -1,6 +1,4 @@
-
-const myTasksList = require("./tasksListQuery").myTasksList;
-const getTasksList = require("./tasksListQuery").getTasksList;
+const { myTasksList, getTasksList } = require("./tasksListQuery");
 
 const Query = {
     myTasksList,
