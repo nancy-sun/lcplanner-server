@@ -1,8 +1,10 @@
 const { myTasksList, getTasksList } = require("./tasksListQuery");
+const { getUser } = require("./userQuery");
 
 const Query = {
     myTasksList,
-    getTasksList
+    getTasksList,
+    getUser
 };
 
 module.exports = Query;
