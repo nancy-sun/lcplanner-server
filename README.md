@@ -1,6 +1,8 @@
 # lcplanner-server
+
+Frontend repo: https://github.com/nancy-sun/lcplanner-server
 ## Description  
-This is the server repo for LCPlanner. LCPLanner is a mobile app for leetcode users to keep a record of problems they have accomplished and problems they plan to do. The app also allow users to share their progress and agenda with peers to provide better peer learning experience.
+This is the server repo for LCPlanner. LCPLanner is a fullstack mobile app for leetcode users to keep a record of problems they have accomplished and problems they plan to do. The app also allow users to share their progress and agenda with peers to provide better peer learning experience.
 
 ## Installation  
       
