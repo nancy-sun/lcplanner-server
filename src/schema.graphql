@@ -42,6 +42,7 @@ type TasksList {
     progress: Float!
     access:[User!]!
     tasks: [Task!]!
+    owner: User!
 }
 
 type Task {
@@ -55,7 +56,7 @@ type Task {
 }
 
 type Query {
-    myTasksList: [TasksList!]!
+    myTasksList: TasksList!
     getTasksList(id: ID!): TasksList
     getUser(id: ID!): User
 }

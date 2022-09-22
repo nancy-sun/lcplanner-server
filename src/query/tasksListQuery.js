@@ -1,13 +1,15 @@
 const { ObjectId } = require("mongodb");
 
-const myTasksList = async (_, __, { db, user }) => { //get all tasks list under a user
+const myTasksList = async (_, __, { db, user }) => { //get a single tasks list owned by user
     if (!user) {
         throw new Error("Authentication failed.");
     }
-    return await db.collection("TasksList").find({ accessIDs: user._id }).toArray();
+    // console.log(await db.collection("TasksList").findOne({ owner: ObjectId(user._id) }))
+    return await db.collection("TasksList").findOne({ ownerID: ObjectId(user._id) });
 }
 
-const getTasksList = async (_, { id }, { db, user }) => { // get a single tasks list
+
+const getTasksList = async (_, { id }, { db, user }) => { // get a single tasks list by tasks list id
     if (!user) {
         throw new Error("Authentication failed.");
     }

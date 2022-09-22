@@ -6,6 +6,7 @@ const createTasksList = async (_, { recap }, { db, user }) => {
     };
     const newTasksList = {
         recap,
+        ownerID: user._id,
         accessIDs: [user._id]
     };
     const result = await db.collection("TasksList").insertOne(newTasksList);
