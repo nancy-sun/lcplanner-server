@@ -1,9 +1,10 @@
-const { myTasksList, getTasksList } = require("./tasksListQuery");
+const { myTasksList, getTasksList, getAccessTasksList } = require("./tasksListQuery");
 const { getUser } = require("./userQuery");
 
 const Query = {
     myTasksList,
     getTasksList,
+    getAccessTasksList,
     getUser
 };
 

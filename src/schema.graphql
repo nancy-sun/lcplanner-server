@@ -59,4 +59,5 @@ type Query {
     myTasksList: TasksList!
     getTasksList(id: ID!): TasksList
     getUser(id: ID!): User
+    getAccessTasksList: [TasksList]
 }

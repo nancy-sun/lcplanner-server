@@ -17,4 +17,12 @@ const getTasksList = async (_, { id }, { db, user }) => { // get a single tasks 
     return foundTasksList;
 };
 
-module.exports = { myTasksList, getTasksList };
+const getAccessTasksList = async (_, __, { db, user }) => { // get a single tasks list by tasks list id
+    if (!user) {
+        throw new Error("Authentication failed.");
+    }
+    const foundTasksLists = await db.collection("TasksList").find({ accessIDs: ObjectId(user._id) }).toArray();
+    return foundTasksLists;
+};
+
+module.exports = { myTasksList, getTasksList, getAccessTasksList };
