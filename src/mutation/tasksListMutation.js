@@ -32,6 +32,7 @@ const deleteTasksList = async (_, { id }, { db, user }) => {
     return true;
 };
 
+// add friend
 const addTasksListUser = async (_, { tasksListID, userEmail }, { db, user }) => {
     if (!user) {
         throw new Error("Authentication failed.");

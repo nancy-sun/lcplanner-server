@@ -18,7 +18,13 @@ const run = async () => { // connect to db, then start server
         context: async ({ req }) => {
             const user = await getUser(req.headers.authorization, db);
             return { db, user };
-        }
+        },
+        formatError: (err) => {
+            if (err.message.startsWith("Database Error: ")) {
+                return new Error("Internal server error");
+            }
+            return err;
+        },
     });
 
     server.listen().then(({ url }) => {
