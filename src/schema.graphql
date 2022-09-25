@@ -17,7 +17,7 @@ type Mutation{
     createTasksList(recap: String): TasksList!
     updateTasksList(id: ID!, recap: String): TasksList!
     deleteTasksList(id: ID!): Boolean! #return if successfully deleted
-    addTasksListUser(tasksListID: ID!, userID: ID!): TasksList! #add other users
+    addTasksListUser(tasksListID: ID!, userEmail: String!): TasksList #add other users
 
     createTask(title: String!, date: String!, deadline: String, note: String, tasksListID: ID!): Task!
     updateTask(id: ID!, title: String, date:String, deadline: String, note: String, isCompleted: Boolean): Task!

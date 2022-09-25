@@ -32,18 +32,24 @@ const deleteTasksList = async (_, { id }, { db, user }) => {
     return true;
 };
 
-const addTasksListUser = async (_, { tasksListID, userID }, { db, user }) => {
+const addTasksListUser = async (_, { tasksListID, userEmail }, { db, user }) => {
     if (!user) {
         throw new Error("Authentication failed.");
     };
+    const userFound = await db.collection("Users").findOne({ email: userEmail })
+    if (!userFound) {
+        throw new Error(`No user with ${userEmail} exists.`);
+    }
     const tasksList = await db.collection("TasksList").findOne({ _id: ObjectId(tasksListID) });
-    if (!tasksList) return null;
+    if (!tasksList) {
+        throw new Error("no tasks list exits");
+    }
     // check if user already exists in access list
-    if (tasksList.accessIDs.find((id) => id.toString() === userID.toString())) {
+    if (tasksList.accessIDs.find((id) => id.toString() === userFound._id.toString())) {
         return tasksList;
     };
-    await db.collection("TasksList").updateOne({ _id: ObjectId(tasksListID) }, { $push: { accessIDs: ObjectId(userID) } });
-    const updatedTasksList = await db.collection("TasksList").findOne({ _id: ObjectId(tasksListID) });
+    await db.collection("TasksList").updateOne({ _id: ObjectId(tasksListID) }, { $push: { accessIDs: userFound._id } });
+    const updatedTasksList = await db.collection("TasksList").findOne({ _id: tasksListID });
     return updatedTasksList;
 };
 
