@@ -13,6 +13,7 @@ input SignInInput {
 type Mutation{
     signUp(input: SignUpInput!): Auth!
     signIn(input: SignInInput!): Auth!
+    updateAvatar(avatar: String!, id: ID!): Boolean!
 
     createTasksList(recap: String): TasksList!
     updateTasksList(id: ID!, recap: String): TasksList!
