@@ -2,7 +2,6 @@ input SignUpInput {
     email: String!
     password: String!
     name: String!
-    avatar: String
 }
 
 input SignInInput {
@@ -13,7 +12,6 @@ input SignInInput {
 type Mutation{
     signUp(input: SignUpInput!): Auth!
     signIn(input: SignInInput!): Auth!
-    updateAvatar(avatar: String!, id: ID!): Boolean!
 
     createTasksList(recap: String): TasksList!
     updateTasksList(id: ID!, recap: String): TasksList!
@@ -34,7 +32,6 @@ type User {
     id: ID!
     name: String!
     email: String!
-    avatar: String
 }
 
 type TasksList {
