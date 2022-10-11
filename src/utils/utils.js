@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { ObjectId } = require("mongodb");
+const axios = require("axios");
 
 const getUser = async (token, db) => {
     if (!token) return null;
@@ -10,4 +11,50 @@ const getUser = async (token, db) => {
 
 const getToken = (user) => jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "60 days" });
 
-module.exports = { getUser, getToken };
+const getLCProfile = async (username) => {
+    const data = JSON.stringify(
+        {
+            query:
+                `{ matchedUser(username: "nancys") {
+                    username
+                    submissionCalendar
+                    submitStats: submitStatsGlobal {
+                        acSubmissionNum {
+                            difficulty
+                            count
+                            submissions
+                        }
+                    }
+                }
+            }`,
+            variables: {}
+        });
+
+    const options = {
+        method: "post",
+        url: "https://leetcode.com/graphql",
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        data: data
+    };
+
+    let result;
+
+    await axios(options).then(async (response) => {
+        const res = await response.data.data.matchedUser; // Response received from the API
+
+        const submissions = await res.submitStats.acSubmissionNum; // {difficult, count, submissions}
+
+        result = {
+            username: res.username,
+            submissionCalendar: res.submissionCalendar, // need to parse object <timestamp, questionNumber>
+            submitStats: submissions
+        }
+    }).catch(function (error) {
+        console.error(error);
+    });
+    return result;
+}
+
+module.exports = { getUser, getToken, getLCProfile };

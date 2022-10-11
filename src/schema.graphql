@@ -53,9 +53,27 @@ type Task {
     tasksList: TasksList!
 }
 
+type SubmitStat {
+    difficulty: String,
+    count: Int,
+    submissions: Int
+}
+
+type SubmitCal{
+    timestamp: String,
+    questionNum: Int
+}
+
+type LCData {
+    username: String
+    submissionCalendar:String
+    submitStats: [SubmitStat]
+}
+
 type Query {
     myTasksList: TasksList!
     getTasksList(id: ID!): TasksList
     getUser(id: ID!): User
     getAccessTasksList: [TasksList]
+    getLCData(username: String):LCData!
 }
