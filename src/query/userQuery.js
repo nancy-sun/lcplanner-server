@@ -6,7 +6,11 @@ const getUser = async (_, { id }, { db }) => { // get a single user
     return foundUser;
 };
 
-const getLCData = async (username) => {
+const getLCData = async (_, { username }, __) => {
+    if (!username) {
+        throw new Error("please provide username")
+    }
+
     const data = await getLCProfile(username);
     return data;
 }

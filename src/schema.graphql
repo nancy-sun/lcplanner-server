@@ -75,5 +75,5 @@ type Query {
     getTasksList(id: ID!): TasksList
     getUser(id: ID!): User
     getAccessTasksList: [TasksList]
-    getLCData(username: String):LCData!
+    getLCData(username: String!):LCData!
 }

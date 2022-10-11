@@ -15,7 +15,8 @@ const getLCProfile = async (username) => {
     const data = JSON.stringify(
         {
             query:
-                `{ matchedUser(username: "nancys") {
+                `query($username: String!)
+                { matchedUser(username: $username) {
                     username
                     submissionCalendar
                     submitStats: submitStatsGlobal {
@@ -27,7 +28,7 @@ const getLCProfile = async (username) => {
                     }
                 }
             }`,
-            variables: {}
+            variables: { "username": username }
         });
 
     const options = {
