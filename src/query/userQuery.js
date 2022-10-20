@@ -8,9 +8,8 @@ const getUser = async (_, { id }, { db }) => { // get a single user
 
 const getLCData = async (_, { username }, __) => {
     if (!username) {
-        throw new Error("please provide username")
+        throw new Error("please provide username");
     }
-
     const data = await getLCProfile(username);
     return data;
 }

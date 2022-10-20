@@ -44,18 +44,16 @@ const getLCProfile = async (username) => {
 
     await axios(options).then(async (response) => {
         const res = await response.data.data.matchedUser; // Response received from the API
-
         const submissions = await res.submitStats.acSubmissionNum; // {difficult, count, submissions}
-
         result = {
             username: res.username,
             submissionCalendar: res.submissionCalendar, // need to parse object <timestamp, questionNumber>
             submitStats: submissions
-        }
+        };
     }).catch(function (error) {
         console.error(error);
     });
     return result;
-}
+};
 
 module.exports = { getUser, getToken, getLCProfile };

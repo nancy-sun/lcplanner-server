@@ -1,6 +1,5 @@
 const { ObjectId } = require("mongodb");
 
-
 const TasksList = {
     id: ({ _id, id }) => _id || id, // id as _id in mongoDB
     progress: async ({ _id }, _, { db }) => {
