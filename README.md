@@ -50,7 +50,7 @@ Start running
 ### Mutations
 - `signUp(input: SignUpInput!)`: requires sign up input object, returns user object and JWT token.
 - `signIn(input: SignInInput!)`: requires sign in input object, returns user object and JWT token.
-- `createTasksList(recap: String)`: returns TasksList object
+- `createTasksList(recap: String)`: returns TasksList object.
 - `updateTasksList(id: ID!, recap: String)`: requires TasksList `id`, returns TasksList object.
 - `deleteTasksList(id: ID!)`: requires TasksList `id`, return `true` if successfully deleted.
 - `addTasksListUser(tasksListID: ID!, userEmail: String!)`: requries TasksList `id` and user's email to add, returns updated TasksList object.
