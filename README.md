@@ -2,11 +2,17 @@
 
 Frontend repo: https://github.com/nancy-sun/lcplanner-server
 ## Description  
-This is the server repo for LCPlanner. LCPLanner is a fullstack mobile app for leetcode users to keep a record of problems they have accomplished and problems they plan to do. The app also allow users to share their progress with peers to provide better peer learning experience.
+This is the server repo for LCPlanner. LCPLanner is a fullstack mobile app for leetcode users to keep a record of problems they have accomplished and problems they plan to do. The app also allow users to share their progress with peers to provide better peer learning experience.   
+
+&nbsp;
 
 ## Installation  
+### Requirement
+- Node.js
+- npm
+- Redis
       
-clone source code locally   
+Download / clone source code locally   
 ```$ git clone https://github.com/nancy-sun/lcplanner-server```
    
 Install dependencies   
@@ -14,7 +20,9 @@ Install dependencies
    
 Start running   
 ```$ npm start```
-   
+      
+&nbsp;
+
 ## Tech Stack
 - Node.js
 - GraphQL
@@ -25,11 +33,12 @@ Start running
 ## Libraries & Resources  
 - cors
 - bcrypt
+   
+&nbsp;
 
 ## API Documentation 
 ### Overview 
-- local host PORT: 5050
-- local host API URL: http://localhost:5050
+- default apollo server url: http://localhost:4000/
 
 ### Queries
 - `myTasksList`: returns TaskList object.
@@ -48,11 +57,19 @@ Start running
 - `createTask(title: String!, date: String!, deadline: String, note: String, tasksListID: ID!)`: requires task title, task date and TasksList `id`, returns Task object.
 - `updateTask(id: ID!, title: String, date:String, deadline: String, note: String, isCompleted: Boolean)`: requires Task `id`, return Task object.
 - `deleteTask(id: ID!)`: requires Task `id`, return `true` if successfully deleted.
+   
+&nbsp;
 
 ## Prototype 
 - 
+   
+&nbsp;
+
 ## Future Discussions
 - 
+   
+&nbsp;
+
 ## Author  
 [@Nancy Sun](https://github.com/nancy-sun)
 
