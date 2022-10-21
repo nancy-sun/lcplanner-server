@@ -1,6 +1,6 @@
 # lcplanner-server
 
-Frontend repo: https://github.com/nancy-sun/lcplanner-server
+Frontend repo: https://github.com/nancy-sun/lcplanner
 ## Description  
 This is the server repo for LCPlanner. LCPLanner is a fullstack mobile app for leetcode users to keep a record of problems they have accomplished and problems they plan to do. The app also allow users to share their progress with peers to provide better peer learning experience.   
 
@@ -38,7 +38,7 @@ Start running
 
 ## API Documentation 
 ### Overview 
-- default apollo server url: http://localhost:4000/
+- Default apollo server url: http://localhost:4000/
 
 ### Queries
 - `myTasksList`: returns TaskList object.
