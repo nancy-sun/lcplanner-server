@@ -1,4 +1,5 @@
 # lcplanner-server
+![logo](https://user-images.githubusercontent.com/99620863/199389894-aca03c24-4b36-4f05-b73a-4ad9bba04fc7.svg)
 
 Frontend repo: https://github.com/nancy-sun/lcplanner
 
@@ -64,7 +65,11 @@ Start running
 &nbsp;
 
 ## Prototype 
-- 
+
+
+https://user-images.githubusercontent.com/99620863/199389911-35757ac0-548a-4f54-ba62-0444f768cf61.mp4
+
+
    
 &nbsp;
 
