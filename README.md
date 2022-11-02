@@ -11,19 +11,20 @@ This is the server repo for LCPlanner. LCPLanner is a fullstack mobile app for l
 &nbsp;
 
 ## Installation  
-### Requirement
-- Node.js
-- npm
-- Redis
       
-Download / clone source code locally   
+### Set up Database (backend)
+[Setup MongoDB Atlas](https://www.mongodb.com/docs/atlas/getting-started/)
+
+### Download / clone source code locally   
 ```$ git clone https://github.com/nancy-sun/lcplanner-server```
    
-Install dependencies   
+### Install dependencies   
 ```$ npm install```   
    
-Start running   
-```$ npm start```
+### Create .env:   
+Please refer to `example.env` for details
+### Start running   
+```$ nodemon index.js```
       
 &nbsp;
 
@@ -66,15 +67,17 @@ Start running
 
 ## Prototype 
 
-
 https://user-images.githubusercontent.com/99620863/199389911-35757ac0-548a-4f54-ba62-0444f768cf61.mp4
-
-
    
 &nbsp;
 
 ## Future Discussions
-- 
+- Add autocomplete of leetcode problems on task inputs for better user experience.
+- Allow users to set deadline for each task.
+- cache tasks data offline.
+- Add push notifications to remind users to complete tasks.
+- Include more information in the contribution graph.
+- Add passport.js login options.
    
 &nbsp;
 
